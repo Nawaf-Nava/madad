@@ -1,0 +1,9 @@
+# Backend integration boundary
+
+The Flutter app currently uses a no-network DEMO shell. Environment preparation has installed the declared backend dependencies, validated/generated Prisma Client, and created an initial migration from the schema. PostgreSQL 16 is installed, enabled, active, and accepting local connections; however, the MADAD database role/owner and credentials could not be inspected because administrative `sudo` access requires the user. No local `.env` was created, no migration was applied, and no database-backed API/authentication operation has been verified. Express health/auth validation was smoke-tested with the Prisma connection stubbed only. No financial service URL or API key is configured.
+
+The backend refuses to start without a database URL and non-placeholder JWT secrets, and checks its PostgreSQL connection before listening. Registration creates an empty wallet; it does not mint demo funds. The transfer endpoint returns `503 FINANCIAL_PROVIDER_UNAVAILABLE` until an authorized provider and settlement flow are implemented. It must not be reported as a successful transfer.
+
+Before connecting a real provider, define a documented API contract for authentication/session refresh, account and balance reads, transaction listing, beneficiary management, payment quoting/confirmation, idempotency, transaction authorization, and status reconciliation. Keep provider implementations behind repository interfaces in `lib/data`; UI must display pending/failed/confirmed according to server responses. Never treat a local button press as proof of a completed financial operation.
+
+Provider-required features, based on source resource vocabulary: login/OTP/account activation and KYC; live wallet balances; all money transfers/remittances; payments and top-ups; digital-card issuance/reload; gold trades; agent availability; push notifications; family wallet server state. UI-only preferences and validation can operate locally.
