@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import '../core/l10n/madad_localizations.dart';
@@ -25,7 +23,6 @@ class MadadApp extends StatefulWidget {
 class _MadadAppState extends State<MadadApp> {
   final locale = ValueNotifier(const Locale('ar'));
   bool _splashElapsed = false;
-  late final Timer _splashTimer;
   late final MadadApiClient api;
   late final AuthRepository authRepository;
   late final AuthState authState;
@@ -33,9 +30,6 @@ class _MadadAppState extends State<MadadApp> {
   @override
   void initState() {
     super.initState();
-    _splashTimer = Timer(const Duration(milliseconds: 1700), () {
-      if (mounted) setState(() => _splashElapsed = true);
-    });
     api = widget.apiClient ?? MadadApiClient();
     authRepository = widget.sessionStorage == null
         ? AuthRepository(api: api)
@@ -45,7 +39,6 @@ class _MadadAppState extends State<MadadApp> {
 
   @override
   void dispose() {
-    _splashTimer.cancel();
     locale.dispose();
     authState.dispose();
     api.close();
@@ -87,7 +80,13 @@ class _MadadAppState extends State<MadadApp> {
             animation: authState,
             builder: (context, _) {
               if (!authState.isInitialized || !_splashElapsed) {
-                return const _SessionLoadingScreen();
+                return _SessionLoadingScreen(
+                  onComplete: () {
+                    if (mounted && !_splashElapsed) {
+                      setState(() => _splashElapsed = true);
+                    }
+                  },
+                );
               }
               return MadadAppScope(
                 auth: authState,
@@ -103,7 +102,9 @@ class _MadadAppState extends State<MadadApp> {
 }
 
 class _SessionLoadingScreen extends StatefulWidget {
-  const _SessionLoadingScreen();
+  const _SessionLoadingScreen({required this.onComplete});
+
+  final VoidCallback onComplete;
 
   @override
   State<_SessionLoadingScreen> createState() => _SessionLoadingScreenState();
@@ -113,8 +114,16 @@ class _SessionLoadingScreenState extends State<_SessionLoadingScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _draw = AnimationController(
     vsync: this,
-    duration: const Duration(milliseconds: 1450),
-  )..forward();
+    duration: const Duration(milliseconds: 1200),
+  )..addStatusListener((status) {
+      if (status == AnimationStatus.completed) widget.onComplete();
+    });
+
+  @override
+  void initState() {
+    super.initState();
+    _draw.forward();
+  }
 
   @override
   void dispose() {

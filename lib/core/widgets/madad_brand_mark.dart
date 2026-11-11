@@ -47,10 +47,10 @@ class MadadLogoLockup extends StatelessWidget {
             painter: _MadadSymbolPainter(),
           ),
           const SizedBox(width: 10),
-          Column(
+          const Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
-            children: const [
+            children: [
               Text(
                 'مَدَد',
                 style: TextStyle(
@@ -97,11 +97,11 @@ class _MadadSymbolPainter extends CustomPainter {
       ..cubicTo(32, 84, 18, 72, 18, 54)
       ..lineTo(18, 40);
     canvas.drawPath(symbol, paint);
-    canvas.drawCircle(const Offset(33, 39), 7, Paint()..color = MadadColors.orange);
+    canvas.drawCircle(
+        const Offset(33, 39), 7, Paint()..color = MadadColors.orange);
     canvas.restore();
   }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
 }

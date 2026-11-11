@@ -84,6 +84,8 @@ void main() {
     await tester.enterText(find.byType(TextField).at(3), 'Person');
     await tester.enterText(find.byType(TextField).at(4), '771234571');
     await tester.enterText(find.byType(TextField).at(5), 'test-password-123');
+    await tester.ensureVisible(find.byType(Checkbox));
+    await tester.pumpAndSettle();
     await tester.tap(find.byType(Checkbox));
     await tester.pumpAndSettle();
     await tester.ensureVisible(find.text('إنشاء الحساب'));

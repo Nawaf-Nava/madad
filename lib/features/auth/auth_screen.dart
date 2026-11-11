@@ -150,23 +150,28 @@ class _AuthScreenState extends State<AuthScreen> {
                 Row(
                   children: [
                     SizedBox(
-                      width: 118,
+                      width: 104,
                       child: DropdownButtonFormField<String>(
                         initialValue: countryCode,
+                        isExpanded: true,
                         decoration: const InputDecoration(
                             contentPadding: EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 16)),
                         items: const [
                           DropdownMenuItem(
-                              value: '+967', child: Text('🇾🇪 +967')),
+                              value: '+967',
+                              child: Text('+967', textAlign: TextAlign.center)),
                           DropdownMenuItem(
-                              value: '+966', child: Text('🇸🇦 +966')),
+                              value: '+966',
+                              child: Text('+966', textAlign: TextAlign.center)),
                           DropdownMenuItem(
-                              value: '+971', child: Text('🇦🇪 +971')),
+                              value: '+971',
+                              child: Text('+971', textAlign: TextAlign.center)),
                         ],
                         onChanged: (value) {
-                          if (value != null)
+                          if (value != null) {
                             setState(() => countryCode = value);
+                          }
                         },
                       ),
                     ),
@@ -305,102 +310,110 @@ class _AuthScreenState extends State<AuthScreen> {
 
   Widget _welcome(MadadLocalizations l10n) => Scaffold(
         body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(24, 14, 24, 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
+          child: LayoutBuilder(
+            builder: (context, constraints) => SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(24, 14, 24, 24),
+              child: ConstrainedBox(
+                constraints:
+                    BoxConstraints(minHeight: constraints.maxHeight - 38),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const Spacer(),
-                    Tooltip(
-                      message: l10n.text('language'),
-                      child: TextButton.icon(
-                        onPressed: _chooseLanguage,
-                        icon: const Icon(Icons.language_rounded),
-                        label: Text(l10n.choose(
-                            ar: 'لغة التطبيق  عربي',
-                            en: 'App language  English')),
+                    Row(
+                      children: [
+                        const Spacer(),
+                        Tooltip(
+                          message: l10n.text('language'),
+                          child: TextButton.icon(
+                            onPressed: _chooseLanguage,
+                            icon: const Icon(Icons.language_rounded),
+                            label: Text(l10n.choose(
+                                ar: 'لغة التطبيق  عربي',
+                                en: 'App language  English')),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: (constraints.maxHeight * .42).clamp(190.0, 340.0),
+                      child: Stack(
+                        children: [
+                          const Positioned.fill(child: _BrandPattern()),
+                          Align(
+                            alignment: const Alignment(0, -.5),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const MadadLogoLockup(markSize: 88),
+                                const SizedBox(height: 40),
+                                Text(
+                                  l10n.choose(
+                                      ar: 'كل ما تحتاجه مَدَد',
+                                      en: 'Everything you need, MADAD'),
+                                  textAlign: TextAlign.end,
+                                  style: const TextStyle(
+                                      color: MadadColors.orange,
+                                      fontSize: 23,
+                                      fontWeight: FontWeight.w900),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  l10n.choose(
+                                      ar: 'ابدأ الآن!', en: 'Get started!'),
+                                  textAlign: TextAlign.end,
+                                  style: const TextStyle(
+                                      color: MadadColors.textPrimary,
+                                      fontSize: 23,
+                                      fontWeight: FontWeight.w900),
+                                ),
+                                const SizedBox(height: 10),
+                                Text(
+                                  l10n.choose(
+                                      ar: 'نظّم جميع حركاتك المالية\nبكل سهولة',
+                                      en: 'Organize your financial activity\nwith ease'),
+                                  textAlign: TextAlign.end,
+                                  style: const TextStyle(
+                                      color: MadadColors.textPrimary,
+                                      fontSize: 20,
+                                      height: 1.6),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
+                    FilledButton(
+                      onPressed: () => setState(() => view = _AuthView.login),
+                      style: FilledButton.styleFrom(
+                          minimumSize: const Size.fromHeight(58)),
+                      child: Text(l10n.text('signIn'),
+                          style: const TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.w900)),
+                    ),
+                    const SizedBox(height: 14),
+                    OutlinedButton(
+                      onPressed: () => setState(() {
+                        view = _AuthView.register;
+                        acceptedTerms = false;
+                      }),
+                      style: OutlinedButton.styleFrom(
+                        minimumSize: const Size.fromHeight(58),
+                        backgroundColor: Colors.white,
+                        foregroundColor: MadadColors.background,
+                        side: BorderSide.none,
+                      ),
+                      child: Text(
+                          l10n.choose(
+                              ar: 'قم بإنشاء الحساب', en: 'Create account'),
+                          style: const TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.w900)),
+                    ),
+                    const SizedBox(height: 24),
+                    _contactLinks(l10n),
                   ],
                 ),
-                Expanded(
-                  flex: 5,
-                  child: Stack(
-                    children: [
-                      const Positioned.fill(child: _BrandPattern()),
-                      Align(
-                        alignment: const Alignment(0, -.5),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const MadadLogoLockup(markSize: 88),
-                            const SizedBox(height: 40),
-                            Text(
-                              l10n.choose(
-                                  ar: 'كل ما تحتاجه مَدَد',
-                                  en: 'Everything you need, MADAD'),
-                              textAlign: TextAlign.end,
-                              style: const TextStyle(
-                                  color: MadadColors.orange,
-                                  fontSize: 23,
-                                  fontWeight: FontWeight.w900),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              l10n.choose(ar: 'ابدأ الآن!', en: 'Get started!'),
-                              textAlign: TextAlign.end,
-                              style: const TextStyle(
-                                  color: MadadColors.textPrimary,
-                                  fontSize: 23,
-                                  fontWeight: FontWeight.w900),
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              l10n.choose(
-                                  ar: 'نظّم جميع حركاتك المالية\nبكل سهولة',
-                                  en: 'Organize your financial activity\nwith ease'),
-                              textAlign: TextAlign.end,
-                              style: const TextStyle(
-                                  color: MadadColors.textPrimary,
-                                  fontSize: 20,
-                                  height: 1.6),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                FilledButton(
-                  onPressed: () => setState(() => view = _AuthView.login),
-                  style: FilledButton.styleFrom(
-                      minimumSize: const Size.fromHeight(58)),
-                  child: Text(l10n.text('signIn'),
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.w900)),
-                ),
-                const SizedBox(height: 14),
-                OutlinedButton(
-                  onPressed: () => setState(() {
-                    view = _AuthView.register;
-                    acceptedTerms = false;
-                  }),
-                  style: OutlinedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(58),
-                    backgroundColor: Colors.white,
-                    foregroundColor: MadadColors.background,
-                    side: BorderSide.none,
-                  ),
-                  child: Text(
-                      l10n.choose(ar: 'قم بإنشاء الحساب', en: 'Create account'),
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.w900)),
-                ),
-                const SizedBox(height: 24),
-                _contactLinks(l10n),
-              ],
+              ),
             ),
           ),
         ),
